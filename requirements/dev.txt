@@ -1,1 +1,9 @@
+# Dev specific
 ipykernel
+
+# Common
+dotenv
+
+langchain
+langchain_core
+langchain-google-genai
