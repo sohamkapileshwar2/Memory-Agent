@@ -2,3 +2,4 @@
 langchain
 langchain_core
 langchain-google-genai
+langchain_core.callbacks.base

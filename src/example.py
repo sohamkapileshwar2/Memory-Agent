@@ -1,4 +1,4 @@
-from llm.gemini import gemini
+from llm.gemini import gemini_with_tools
 from memory.core_memory import agent_memory
 
 system_prompt = "You are a chatbot. " \
@@ -14,8 +14,8 @@ messages = [
     ("human", "I love programming."),
 ]
 
-ai_msg = gemini.invoke(messages)
-print(ai_msg)
+ai_msg = gemini_with_tools.invoke(messages)
+# print(ai_msg)
 print("\n\n\n")
 print("CONTENT", ai_msg.content)
 print("AGENT MEMORY", agent_memory)
