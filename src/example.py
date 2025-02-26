@@ -1,5 +1,7 @@
 from llm.gemini import gemini_with_tools
 from memory.core_memory import agent_memory
+from tools.store_into_memory import store_into_memory
+
 
 system_prompt = "You are a chatbot. " \
 + "You have a section of your context called [MEMORY] " \
@@ -14,8 +16,9 @@ messages = [
     ("human", "I love programming."),
 ]
 
-ai_msg = gemini_with_tools.invoke(messages)
-# print(ai_msg)
-print("\n\n\n")
-print("CONTENT", ai_msg.content)
-print("AGENT MEMORY", agent_memory)
+gemini_response = gemini_with_tools.invoke(messages)
+
+tool_call = gemini_response.tool_calls[0]
+tool_output = {"store_into_memory": store_into_memory}[tool_call["name"].lower()].invoke(tool_call["args"])
+
+print(agent_memory)
