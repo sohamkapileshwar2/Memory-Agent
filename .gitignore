@@ -3,7 +3,7 @@
 .venv
 env/
 venv/
-
+memory-agent/
 # VSCODE IDE
 .vscode
 
