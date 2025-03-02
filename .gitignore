@@ -17,6 +17,7 @@ __pycache__/
 
 # Local Agent Memory
 core_memory.json
+data
 
 # Uncomment as needed
 

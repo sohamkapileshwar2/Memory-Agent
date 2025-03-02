@@ -1,7 +1,12 @@
-from tools.store_into_memory import StoreIntoMemory, store_into_memory
+from tools.store_general_information import StoreGeneralInformation, store_general_information
+from tools.store_data import StoreData, store_data
+from tools.retrieve_data import RetrieveData, retrieve_data
 
-tools = [StoreIntoMemory]
+
+tools = [StoreGeneralInformation,StoreData,RetrieveData]
 
 tool_calls = {
-    "StoreIntoMemory" : store_into_memory
+    "StoreGeneralInformation" : store_general_information,
+    "StoreData": store_data,
+    "RetrieveData": retrieve_data,
 }
