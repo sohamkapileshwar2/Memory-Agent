@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from langchain_core.callbacks.base import BaseCallbackHandler
+from langchain_core.callbacks.stdout import StdOutCallbackHandler
 from langchain_google_genai import ChatGoogleGenerativeAI
 from tools import tools
 
@@ -19,5 +20,7 @@ class CustomHandler(BaseCallbackHandler):
     #     formatted_prompts = "\n".join(input_str)
     #     print(f"On Tool start:\n{formatted_prompts}")
 
-gemini = ChatGoogleGenerativeAI(model="gemini-2.0-flash",temperature=0,max_tokens=None,timeout=30,max_retries=2,callbacks=[CustomHandler()])
+handler = StdOutCallbackHandler()
+
+gemini = ChatGoogleGenerativeAI(model="gemini-2.0-flash",temperature=0,max_tokens=None,timeout=30,max_retries=2,callbacks=[handler])
 gemini_with_tools = gemini.bind_tools(tools)

@@ -29,7 +29,7 @@ def store_data(topic_name:str, info:str, agent_memory:AgentMemory):
     if topic_name in data:
         data[topic_name].append(info)
     else:
-        data[topic_name]=info
+        data[topic_name]=[info]
 
     agent_memory.persist_data()
 

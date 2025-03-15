@@ -17,11 +17,25 @@ class AgentMemory:
             self.general_information = {}  # Initialize as empty
             return
     
-        with open(self.GENERAL_INFORMATION_PATH, "r") as file:
-            self.general_information = json.load(file)
+        try:
+            with open(self.GENERAL_INFORMATION_PATH, "r", encoding="utf-8") as file:
+                data = json.load(file)  # Attempt to load JSON
+                
+                if isinstance(data, dict):  # Ensure it's a valid dictionary
+                    self.general_information = data
+                else:
+                    print("Warning: JSON is valid but not a dictionary. Initializing empty data.")
+                    self.general_information = {}
+
+        except json.JSONDecodeError:
+            print(f"Error: {self.GENERAL_INFORMATION_PATH} contains invalid JSON. Resetting to empty.")
+            self.general_information = {}  # Reset on JSON error
+        except Exception as e:
+            print(f"Unexpected error reading {self.GENERAL_INFORMATION_PATH}: {e}")
+            self.general_information = {}  # Handle other unknown errors
 
     def persist_general_information(self) -> None:
-        with open(self.GENERAL_INFORMATION_PATH, "a") as file:
+        with open(self.GENERAL_INFORMATION_PATH, "w") as file:
             print(f"Persisting {self.general_information} to {self.GENERAL_INFORMATION_PATH}")
             json.dump(self.general_information, file, indent=4)
 
@@ -35,8 +49,8 @@ class AgentMemory:
             self.relevant_retrieved_memory = json.load(file)
 
     def persist_data(self) -> None:
-        with open(self.PERSISTENT_MEMORY_PATH, "a") as file:
-            print(f"Persisting {self.persist_memory} to {self.PERSISTENT_MEMORY_PATH}")
+        with open(self.PERSISTENT_MEMORY_PATH, "w") as file:
+            print(f"Persisting {self.relevant_retrieved_memory} to {self.PERSISTENT_MEMORY_PATH}")
             json.dump(self.relevant_retrieved_memory, file, indent=4)
 
         

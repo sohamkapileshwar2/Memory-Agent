@@ -18,7 +18,7 @@ class RetrieveData(BaseModel):
 
 # retrieving complete memory for now
 # Retrieve from memory function implementation
-def retrieve_data(user_type,user_input):
+def retrieve_data(user_type, user_input, agent_memory):
     '''
     Retrieves information by the user for the particular attribute in core memory.
 
