@@ -1,9 +1,11 @@
 from llm.gemini import gemini_with_tools
 from langchain.globals import set_debug, set_verbose
 
-from llm.gemini import gemini_with_tools
+from llm.gemini import gemini_with_tools,gemini
 from tools import tools, tool_calls
 from memory.agent_memory import AgentMemory
+from langchain_core.prompts import ChatPromptTemplate
+from langchain.agents import create_tool_calling_agent,AgentExecutor
 
 set_debug(True)
 set_verbose(True)
@@ -11,7 +13,8 @@ set_verbose(True)
 agent_memory = AgentMemory()
 
 def generate_system_prompt(general_information: dict, relevant_retrieved_memory:dict):
-    return f"""You are a chatbot.
+    return ChatPromptTemplate([
+        ("system","""You are a chatbot.
         You have two sections in your context one called [GENERAL INFORMATION] that contains information relevant to your conversation. Its a JSON containing personal information about the user and their stored data.
         The other called [RELEVANT RETRIEVED MEMORY] which contains retrieved information from persistent memory related to user's question.
         You have these tasks to perform:
@@ -30,7 +33,9 @@ def generate_system_prompt(general_information: dict, relevant_retrieved_memory:
         ```[RELEVANT RETRIEVED MEMORY]
         {relevant_retrieved_memory}
         ```
-        """
+        """),
+        ("placeholder", "{agent_scratchpad}"),
+        ])
 messages = []
 
 def agent_step(user_input):
@@ -68,4 +73,8 @@ def agent_step(user_input):
 
 while True:
     user_input = input("Hi there! I'm here to serve you. Please tell me how can I help you?\n") 
-    print(agent_step(user_input))
+    # print(agent_step(user_input))
+    agent = create_tool_calling_agent(gemini, tools, generate_system_prompt([],[]))
+    agent_executor = AgentExecutor(agent=agent, tools=tools)
+    agent_executor.invoke({"input":user_input})
+

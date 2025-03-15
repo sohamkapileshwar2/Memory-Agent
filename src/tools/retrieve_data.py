@@ -1,7 +1,7 @@
-from langchain_core.tools import tool
+from langchain.agents import Tool
 from memory.agent_memory import AgentMemory
 
-from pydantic import BaseModel, Field
+from pydantic.v1 import BaseModel, Field
 
 # Retrieve from memory tool call definition using pydantic class
 # Used to pass definition of the function to LLM
@@ -29,3 +29,9 @@ def retrieve_data(user_type,user_input):
     '''
     return agent_memory.read_persistent_memory()
 
+
+retrieve_data_tool = Tool(
+    name="retrieve data",
+    description="Retrieves data which is inputed by the user for a particular topic in persistent memory.",
+    func=retrieve_data,
+)

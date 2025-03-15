@@ -1,6 +1,6 @@
-from langchain_core.tools import tool
+from langchain.agents import Tool
 
-from pydantic import BaseModel, Field
+from pydantic.v1 import BaseModel, Field
 from memory.agent_memory import AgentMemory
 
 # Store into memory tool call definition using pydantic class
@@ -39,4 +39,8 @@ def store_general_information(user_type:str, attribute:str, info:str,agent_memor
     agent_memory.persist_general_information()
 
         
-
+store_general_information_tool = Tool(
+    name="store general information",
+    description="Stores general information inputed by the user for the particular attribute in in-memory and other information in persistent memory.",
+    func=store_general_information,
+)
