@@ -18,11 +18,10 @@ class RetrieveData(BaseModel):
 
 # retrieving complete memory for now
 # Retrieve from memory function implementation
-def retrieve_data(user_type,user_input):
+def retrieve_data(user_type, user_input, agent_memory):
     '''
-    Retrieves information by the user for the particular attribute in core memory.
-
-    Retrieve similar content, check if we have the answer if not add it as a prompt for llm
+    Retrieves data which is inputed by the user for a particular topic from persistent memory.
+    
     Args:
         user_type: It can be either human or agent
         user_input: Question/Information requested by user
@@ -31,7 +30,7 @@ def retrieve_data(user_type,user_input):
 
 
 retrieve_data_tool = Tool(
-    name="retrieve data",
-    description="Retrieves data which is inputed by the user for a particular topic in persistent memory.",
+    name="retrieve_data",
+    description="Retrieves data which is inputed by the user for a particular topic from persistent memory.",
     func=retrieve_data,
 )

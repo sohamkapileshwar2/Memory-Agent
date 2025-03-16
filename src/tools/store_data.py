@@ -35,7 +35,7 @@ def store_data(topic_name:str, info:str, agent_memory:AgentMemory):
 
 
 store_data_tool = Tool(
-    name="store data",
+    name="store_data",
     description="Stores data which is inputed by the user for a particular topic in persistent memory.",
     func=store_data,
 )
