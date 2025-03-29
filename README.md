@@ -6,5 +6,7 @@ Personal long term memory agent
 2. MemAI based on the user input will either retrieve or store relevant information in a persistent storage.
 
 ### To do:
-1. How to send the tool response back to LLM? System prompt gives an error
-2. Add json key value pair in the json file
+1. Fix all tools. All tools should work
+2. Agentic Loop
+3. Insert chat historys
+4. Cleanup everything not needed

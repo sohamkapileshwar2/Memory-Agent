@@ -1,6 +1,6 @@
-from langchain_core.tools import tool
+from langchain.agents import Tool
 
-from pydantic import BaseModel, Field
+from pydantic.v1 import BaseModel, Field
 from memory.agent_memory import AgentMemory
 
 # Store into memory tool call definition using pydantic class
@@ -34,5 +34,8 @@ def store_data(topic_name:str, info:str, agent_memory:AgentMemory):
     agent_memory.persist_data()
 
 
-        
-
+store_data_tool = Tool(
+    name="store_data",
+    description="Stores data which is inputed by the user for a particular topic in persistent memory.",
+    func=store_data,
+)

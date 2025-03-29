@@ -1,9 +1,15 @@
 from llm.gemini import gemini_with_tools
 from langchain.globals import set_debug, set_verbose
 
-from llm.gemini import gemini_with_tools
+from llm.gemini import gemini_with_tools,gemini
 from tools import tools, tool_calls
 from memory.agent_memory import AgentMemory
+from langchain_core.prompts import ChatPromptTemplate
+from langchain.agents import create_tool_calling_agent, AgentExecutor
+from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.runnables import chain
+
+from langchain.agents.output_parsers.tools import ToolAgentAction
 
 set_debug(True)
 set_verbose(True)
@@ -11,7 +17,8 @@ set_verbose(True)
 agent_memory = AgentMemory()
 
 def generate_system_prompt(general_information: dict, relevant_retrieved_memory:dict):
-    return f"""You are a chatbot.
+    return ChatPromptTemplate([
+        ("system","""You are a chatbot.
         You have two sections in your context one called [GENERAL INFORMATION] that contains information relevant to your conversation. Its a JSON containing personal information about the user and their stored data.
         The other called [RELEVANT RETRIEVED MEMORY] which contains retrieved information from persistent memory related to user's question.
         You have these tasks to perform:
@@ -23,14 +30,10 @@ def generate_system_prompt(general_information: dict, relevant_retrieved_memory:
             1. StoreIntoMemory - Tool to store any information into persistent memory
             2. RetrieveFromMemory - Tool to retrieve information from persistent memory
 
-        ```[GENERAL INFORMATION]
-        {general_information}
         ```
-
-        ```[RELEVANT RETRIEVED MEMORY]
-        {relevant_retrieved_memory}
-        ```
-        """
+        """),
+        ("placeholder", "{agent_scratchpad}"),
+        ])
 messages = []
 
 def agent_step(user_input):
@@ -66,6 +69,55 @@ def agent_step(user_input):
                     print(f"Exception while calling {function.__str__()}", end="\n\n")
                     return Exception
 
+# Agent Executor
+
+prompt_template = ChatPromptTemplate([
+        ("system","""You are a chatbot.
+            You have these tasks to perform:
+                1. If the user gives any information about them or asks you to remember some text, you have to store it in your persistent memory. Acknowledge the user that you have stored the information in memory.
+                2. If the user asks a query/question, answer the query if the information is available in your [GENERAL INFORMATION]
+                3. If the user asks a query/question, answer the query if the information is available in your [RELEVANT RETRIEVED MEMORY]
+                4. If the user asks a query/question and the answer is not available, retrieve the most relevant information from your persistent memory.
+            You have the following available tools to perform the above tasks:
+                1. store_general_information - Tool to store any user information into persistent memory
+                2. store_data - Tool to store user related data into persistent memory
+                2. retrieve_data - Tool to retrieve information from persistent memory
+        """),
+        ("placeholder", "{chat_history}"),
+        ("human", "{input}"),
+        ("placeholder", "{agent_scratchpad}"),
+        ])
+# prompt = prompt_template.invoke({"chat_history":[]})
+
+
+@chain
+def inject_agent_memory(tool_agent_actions):
+    print("TOOL AGENT ACTIONS", tool_agent_actions, end="\n\n\n")
+    print("TYPE TOOL AGENT ACTIONS", type(tool_agent_actions), end="\n\n\n")
+
+    if isinstance(tool_agent_actions, list):
+
+        for action in tool_agent_actions:
+            if isinstance(action, ToolAgentAction):
+                action.tool_input["agent_memory"] = agent_memory
+    
+    return tool_agent_actions
+
+
+agent = create_tool_calling_agent(llm=gemini, tools=tools, prompt=prompt_template) | inject_agent_memory
+# print("PROMPT TEMPLATE", agent.steps[1].messages, end="\n\n\n")
+
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+
 while True:
-    user_input = input("Hi there! I'm here to serve you. Please tell me how can I help you?\n") 
-    print(agent_step(user_input))
+    user_input = input("Enter user input \n")
+    agent_executor.invoke(
+        {
+            "input": user_input,
+            "chat_history": [
+                HumanMessage(content="Hi my name is aditi chaman"),
+                AIMessage(content="Hello aditi chaman, how can i assist you today?"),
+            ],
+        }
+    )
+
