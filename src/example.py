@@ -79,9 +79,10 @@ prompt_template = ChatPromptTemplate([
                 3. If the user asks a query/question, answer the query if the information is available in your [RELEVANT RETRIEVED MEMORY]
                 4. If the user asks a query/question and the answer is not available, retrieve the most relevant information from your persistent memory.
             You have the following available tools to perform the above tasks:
-                1. store_general_information - Tool to store any user information into persistent memory
-                2. store_data - Tool to store user related data into persistent memory
-                2. retrieve_data - Tool to retrieve information from persistent memory
+                1. write_user_info - Tool to store any user related information into persistent memory
+                2. write_knowledge_store - Tool to write any user provided knowledge into persistent memory
+                3. read_knowledge_store - Tool to retrieve any user provided knowledge from persistent memory
+                4. read_user_info - Tool to read user related information from persistent memory
         """),
         ("placeholder", "{chat_history}"),
         ("human", "{input}"),

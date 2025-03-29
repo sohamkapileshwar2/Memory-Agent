@@ -1,12 +1,8 @@
-from tools.store_general_information import StoreGeneralInformation, store_general_information,store_general_information_tool
-from tools.store_data import StoreData, store_data,store_data_tool
-from tools.retrieve_data import RetrieveData, retrieve_data,retrieve_data_tool
+from tools.write_user_info import write_user_info_tool
+from tools.write_knowledge_store import  write_knowledge_store_tool
+from tools.read_knowledge_store import read_knowledge_store_tool
+from tools.read_user_info import read_user_info_tool
 
 
-tools = [store_general_information_tool,store_data_tool,retrieve_data_tool]
 
-tool_calls = {
-    "StoreGeneralInformation" : store_general_information,
-    "StoreData": store_data,
-    "RetrieveData": retrieve_data,
-}
+tools = [write_user_info_tool,write_knowledge_store_tool,read_knowledge_store_tool,read_user_info_tool]
