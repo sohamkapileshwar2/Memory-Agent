@@ -2,8 +2,8 @@ import json
 import os
 
 class AgentMemory:
-    GENERAL_INFORMATION_PATH = "data/general_information.json"
-    PERSISTENT_MEMORY_PATH = "data/persistent_memory.json"
+    GENERAL_INFORMATION_PATH = "../data/general_information.json"
+    PERSISTENT_MEMORY_PATH = "../data/persistent_memory.json"
 
     def __init__(self) -> None:
         # User and other agent preferences used for personalising the LLM. This will be a part of the system prompt and contents will be updated from the user input and persistent memory.
@@ -21,7 +21,7 @@ class AgentMemory:
             self.general_information = json.load(file)
 
     def persist_general_information(self) -> None:
-        with open(self.GENERAL_INFORMATION_PATH, "a") as file:
+        with open(self.GENERAL_INFORMATION_PATH, "w") as file:
             print(f"Persisting {self.general_information} to {self.GENERAL_INFORMATION_PATH}")
             json.dump(self.general_information, file, indent=4)
 

@@ -9,6 +9,8 @@ from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.runnables import chain
 
+from langchain.agents.output_parsers.tools import ToolAgentAction
+
 set_debug(True)
 set_verbose(True)
 
@@ -90,8 +92,14 @@ prompt_template = ChatPromptTemplate([
 
 @chain
 def inject_agent_memory(tool_agent_actions):
-    for action in tool_agent_actions:
-        action.tool_input["agent_memory"] = agent_memory
+    print("TOOL AGENT ACTIONS", tool_agent_actions, end="\n\n\n")
+    print("TYPE TOOL AGENT ACTIONS", type(tool_agent_actions), end="\n\n\n")
+
+    if isinstance(tool_agent_actions, list):
+
+        for action in tool_agent_actions:
+            if isinstance(action, ToolAgentAction):
+                action.tool_input["agent_memory"] = agent_memory
     
     return tool_agent_actions
 
@@ -100,15 +108,16 @@ agent = create_tool_calling_agent(llm=gemini, tools=tools, prompt=prompt_templat
 # print("PROMPT TEMPLATE", agent.steps[1].messages, end="\n\n\n")
 
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-user_input = input("Enter user input")
 
-agent_executor.invoke(
-    {
-        "input": user_input,
-        "chat_history": [
-            # HumanMessage(content="hi! my name is bob"),
-            # AIMessage(content="Hello Bob! How can I assist you today?"),
-        ],
-    }
-)
+while True:
+    user_input = input("Enter user input \n")
+    agent_executor.invoke(
+        {
+            "input": user_input,
+            "chat_history": [
+                HumanMessage(content="Hi my name is aditi chaman"),
+                AIMessage(content="Hello aditi chaman, how can i assist you today?"),
+            ],
+        }
+    )
 
