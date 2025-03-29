@@ -51,12 +51,12 @@ class WriteKnowledgeStoreTool(BaseTool):
         
 # Store into memory function implementation
 def write_knowledge_store(topic_name:str, info:str, agent_memory:AgentMemory):
-    data = agent_memory.relevant_retrieved_memory
+    data = agent_memory.retrieved_knowledge
     if topic_name in data:
         data[topic_name].append(info)
     else:
         data[topic_name]=info
 
-    agent_memory.persist_data()
+    agent_memory.write_knowledge_store()
 
 write_knowledge_store_tool = WriteKnowledgeStoreTool()

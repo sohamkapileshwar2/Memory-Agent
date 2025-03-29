@@ -28,7 +28,7 @@ class ReadUserInfo(BaseModel):
 
 class ReadUserInfoTool(BaseTool):
 
-    name: str = "retrieve_generak_information"
+    name: str = "read_user_info"
     description: str = """Retrieves user related information which is inputed by the user for a particular topic from persistent memory."""
     args_schema: Type[ReadUserInfo] = ReadUserInfo
 
@@ -39,7 +39,7 @@ class ReadUserInfoTool(BaseTool):
         user_input:str,
         agent_memory:AgentMemory,
         run_manager: Optional[CallbackManagerForToolRun] = None,
-    ) -> None:
+    ) -> dict:
         '''
         Retrieves user related information which is inputed by the user for a particular topic from persistent memory.
         
@@ -47,12 +47,13 @@ class ReadUserInfoTool(BaseTool):
             user_type: It can be either human or agent
             user_input: Question/Information requested by user
         '''
-        read_user_info(user_type, user_input, agent_memory
-    )
+        return read_user_info(user_type, user_input, agent_memory)
 
 # retrieving complete memory for now
 # Retrieve from memory function implementation
 def read_user_info(user_type, user_input, agent_memory):
-    return agent_memory.read_general_information()
+    agent_memory.read_user_info()
+
+    return agent_memory.user_info
 
 read_user_info_tool = ReadUserInfoTool()

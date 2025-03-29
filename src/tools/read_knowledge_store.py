@@ -39,7 +39,7 @@ class ReadKnowledgeStoreTool(BaseTool):
         user_input:str,
         agent_memory:AgentMemory,
         run_manager: Optional[CallbackManagerForToolRun] = None,
-    ) -> None:
+    ) -> dict:
         '''
         Retrieves knowledge store which is inputed by the user for a particular topic from persistent memory.
         
@@ -47,12 +47,13 @@ class ReadKnowledgeStoreTool(BaseTool):
             user_type: It can be either human or agent
             user_input: Question/Information requested by user
         '''
-        read_knowledge_store(user_type, user_input, agent_memory
-    )
+        return read_knowledge_store(user_type, user_input, agent_memory)
 
 # retrieving complete memory for now
 # Retrieve from memory function implementation
 def read_knowledge_store(user_type, user_input, agent_memory):
-    return agent_memory.read_data()
+    agent_memory.read_knowledge_store()
+
+    return agent_memory.retrieved_knowledge
 
 read_knowledge_store_tool = ReadKnowledgeStoreTool()

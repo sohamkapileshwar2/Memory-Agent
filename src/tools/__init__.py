@@ -3,6 +3,4 @@ from tools.write_knowledge_store import  write_knowledge_store_tool
 from tools.read_knowledge_store import read_knowledge_store_tool
 from tools.read_user_info import read_user_info_tool
 
-
-
 tools = [write_user_info_tool,write_knowledge_store_tool,read_knowledge_store_tool,read_user_info_tool]

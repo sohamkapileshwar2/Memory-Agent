@@ -62,6 +62,6 @@ def write_user_info(user_type:str, attribute:str, info:str, agent_memory:AgentMe
 		user_info[user_type] = {}
 		user_info[user_type][attribute]=info
 
-	agent_memory.persist_user_info()
+	agent_memory.write_user_info()
 
 write_user_info_tool = WriteUserInformationTool()

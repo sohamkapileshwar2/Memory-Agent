@@ -1,42 +1,47 @@
 import json
 import os
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))  # Points to 'src/memory'
+ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..")) # Move up two levels to reach the root directory
+
+data_folder_path = os.path.join(ROOT_DIR, "data")
+os.chmod(data_folder_path, 0o777)
+
 class AgentMemory:
-    GENERAL_INFORMATION_PATH = "../data/general_information.json"
-    PERSISTENT_MEMORY_PATH = "../data/persistent_memory.json"
+    USER_INFO_PATH = f"{data_folder_path}/user_info.json"
+    KNOWLEDGE_STORE_PATH = f"{data_folder_path}/knowledge_store.json"
 
     def __init__(self) -> None:
-        # User and other agent preferences used for personalising the LLM. This will be a part of the system prompt and contents will be updated from the user input and persistent memory.
-        self.general_information = {}
-        self.relevant_retrieved_memory = {}
-        self.read_general_information()
+        self.user_info = {}
+        self.retrieved_knowledge = {}
+        self.read_user_info()
     
-    def read_general_information(self) -> None:
-        if not os.path.exists(self.GENERAL_INFORMATION_PATH):
-            print(f"{self.GENERAL_INFORMATION_PATH} not found. Initializing empty agent memory.")
-            self.general_information = {}  # Initialize as empty
+    def read_user_info(self) -> None:
+        if not os.path.exists(self.USER_INFO_PATH):
+            print(f"{self.USER_INFO_PATH} not found. Initializing empty agent memory.")
+            self.user_info = {}  # Initialize as empty
             return
     
-        with open(self.GENERAL_INFORMATION_PATH, "r") as file:
-            self.general_information = json.load(file)
+        with open(self.USER_INFO_PATH, "r") as file:
+            self.user_info = json.load(file)
 
-    def persist_general_information(self) -> None:
-        with open(self.GENERAL_INFORMATION_PATH, "w") as file:
-            print(f"Persisting {self.general_information} to {self.GENERAL_INFORMATION_PATH}")
-            json.dump(self.general_information, file, indent=4)
+    def write_user_info(self) -> None:
+        with open(self.USER_INFO_PATH, "w") as file:
+            print(f"Persisting {self.user_info} to {self.USER_INFO_PATH}")
+            json.dump(self.user_info, file, indent=4)
 
-    def read_data(self) -> None:
-        if not os.path.exists(self.PERSISTENT_MEMORY_PATH):
-            print(f"{self.PERSISTENT_MEMORY_PATH} not found. Initializing empty agent memory.")
-            self.relevant_retrieved_memory = {}  # Initialize as empty
+    def read_knowledge_store(self) -> None:
+        if not os.path.exists(self.KNOWLEDGE_STORE_PATH):
+            print(f"{self.KNOWLEDGE_STORE_PATH} not found. Initializing empty agent memory.")
+            self.retrieved_knowledge = {}  # Initialize as empty
             return
     
-        with open(self.PERSISTENT_MEMORY_PATH, "r") as file:
-            self.relevant_retrieved_memory = json.load(file)
+        with open(self.KNOWLEDGE_STORE_PATH, "r") as file:
+            self.retrieved_knowledge = json.load(file)
 
-    def persist_data(self) -> None:
-        with open(self.PERSISTENT_MEMORY_PATH, "a") as file:
-            print(f"Persisting {self.persist_memory} to {self.PERSISTENT_MEMORY_PATH}")
-            json.dump(self.relevant_retrieved_memory, file, indent=4)
+    def write_knowledge_store(self) -> None:
+        with open(self.KNOWLEDGE_STORE_PATH, "w") as file:
+            print(f"Persisting {self.retrieved_knowledge} to {self.KNOWLEDGE_STORE_PATH}")
+            json.dump(self.retrieved_knowledge, file, indent=4)
 
         
