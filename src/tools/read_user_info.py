@@ -9,16 +9,8 @@ from pydantic.v1 import BaseModel, Field
 from langchain.callbacks.manager import (
 	CallbackManagerForToolRun,
 )
-# Retrieve from memory tool call definition using pydantic class
-# Used to pass definition of the function to LLM
+# Pydantic class: schema argument for read user info tool call
 class ReadUserInfo(BaseModel):
-    '''
-    Retrieves user related information inputed by the user for the particular attribute in core memory.
-
-    Args:
-        user_type: It can be either human or agent
-        user_input: Question/Information requested by user
-    '''
     user_type: str = Field(description="Enum: human | agent")
     user_input: str = Field(description="Question/Information requested by user")
     agent_memory: Annotated[AgentMemory, InjectedToolArg] 
@@ -29,7 +21,7 @@ class ReadUserInfo(BaseModel):
 class ReadUserInfoTool(BaseTool):
 
     name: str = "read_user_info"
-    description: str = """Retrieves user related information which is inputed by the user for a particular topic from persistent memory."""
+    description: str = """Retrieve user related information from persistent memory if it is not present in prompt context.(e.g., name, preferences, personal details)."""
     args_schema: Type[ReadUserInfo] = ReadUserInfo
 
 
@@ -41,7 +33,7 @@ class ReadUserInfoTool(BaseTool):
         run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> dict:
         '''
-        Retrieves user related information which is inputed by the user for a particular topic from persistent memory.
+        Retrieve user related information from persistent memory if it is not present in prompt context .(e.g., name, preferences, personal details).
         
         Args:
             user_type: It can be either human or agent
@@ -49,8 +41,6 @@ class ReadUserInfoTool(BaseTool):
         '''
         return read_user_info(user_type, user_input, agent_memory)
 
-# retrieving complete memory for now
-# Retrieve from memory function implementation
 def read_user_info(user_type, user_input, agent_memory):
     agent_memory.read_user_info()
 

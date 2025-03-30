@@ -13,14 +13,6 @@ from langchain.callbacks.manager import (
 # Store into memory tool call definition using pydantic class
 # Used to pass definition of the function to LLM
 class WriteUserInformation(BaseModel):
-	'''
-	Stores information inputed by the user for the particular attribute in core memory.
-
-	Args:
-		user_type: It can be either human or agent
-		attribute: Attribute/Key name of the information of the user
-		info: Information to be stored corresponsing to the attribute
-	'''
 	user_type: str = Field(description="Enum: human | agent")
 	attribute: str = Field(description="Attribute name of the information being stored about the user type")
 	info: str = Field(description="Information being stored corresponding to the attribute")
@@ -32,7 +24,7 @@ class WriteUserInformation(BaseModel):
 class WriteUserInformationTool(BaseTool):
 
 	name: str = "write_user_info"
-	description: str = """Writes user related information for the particular attribute in persistent memory."""
+	description: str = """Stores user-related information into persistent memory. (e.g., name, preferences, personal details)."""
 	args_schema: Type[WriteUserInformation] = WriteUserInformation
   
 	def _run(
@@ -44,7 +36,7 @@ class WriteUserInformationTool(BaseTool):
 		run_manager: Optional[CallbackManagerForToolRun] = None,
 	) -> None:
 		'''
-		Writes user information inputed by the user for the particular attribute in persistent memory.
+		Writes user-related information inputed by the user for the particular attribute in persistent memory.(e.g., name, preferences, personal details).
 
 		Args:
 			user_type: Enum - human | agent
@@ -53,6 +45,7 @@ class WriteUserInformationTool(BaseTool):
 		'''
 		write_user_info(user_type, attribute, info, agent_memory)
 
+# TODO: Need to implement multiple user attributes input into the file
 # Store into memory function implementation
 def write_user_info(user_type:str, attribute:str, info:str, agent_memory:AgentMemory):
 	user_info = agent_memory.user_info

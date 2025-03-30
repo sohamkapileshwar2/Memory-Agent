@@ -12,13 +12,6 @@ from langchain.callbacks.manager import (
 
 # Schema to pass to write knowledge store tool : Used to pass definition of the function to LLM
 class WriteKnowledgeStore(BaseModel):
-    '''
-    Stores knowledge data which is inputed by the user for a particular topic in persistent memory.
-
-    Args:
-        topic_name: Topic of the information being stored
-        info: Information to be stored corresponsing to the topic name
-    '''
     topic_name: str = Field(description="Topic of the information being stored")
     info: str = Field(description="Information being stored corresponding ")
     agent_memory: Annotated[AgentMemory, InjectedToolArg] 
@@ -29,7 +22,7 @@ class WriteKnowledgeStore(BaseModel):
 class WriteKnowledgeStoreTool(BaseTool):
 
     name: str = "write_knowledge_store"
-    description: str = """Stores knowledge data which is inputed by the user for a particular topic in persistent memory."""
+    description: str = """Stores user-provided knowledge into persistent memory when user provides information related to the topic.(e.g., notes, saved facts, code snippets, tech design)."""
     args_schema: Type[WriteKnowledgeStore] = WriteKnowledgeStore
 
     def _run(
@@ -40,7 +33,7 @@ class WriteKnowledgeStoreTool(BaseTool):
         run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> None:
         '''
-        Stores data which is inputed by the user for a particular topic in persistent memory.
+        Stores user-provided knowledge into persistent memory when user provides information related to the topic. (e.g., notes, saved facts, code snippets, tech design).
 
         Args:
             topic_name: Topic of the information being stored

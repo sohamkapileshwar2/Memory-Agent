@@ -12,29 +12,37 @@ from memory.agent_memory import AgentMemory
 set_debug(True)
 set_verbose(True)
 
+# Initialises agent memory which consists of user information and knowledge store
 agent_memory = AgentMemory()
 
-# Agent Executor
-
 prompt_template = ChatPromptTemplate([
-        ("system","""You are a chatbot.
-            You have the following tasks to perform:
-                1. If the user gives any information about them or asks you to remember some text, you have to store it in your persistent memory. Acknowledge the user that you have stored the information in memory.
-                2. If the user asks a query/question, you should check if the human has provided the answer before in your prompt context first.
-                3. If the user asks a query/question and the answer is not available in the prompt context, retrieve the most relevant information from your persistent memory.
-            You have the following available tools to perform the above tasks:
-                1. write_user_info - Tool to store any user related information into persistent memory
-                2. write_knowledge_store - Tool to store any user provided knowledge into persistent memory
-                3. read_knowledge_store - Tool to retrieve any user provided knowledge from persistent memory
-                4. read_user_info - Tool to retrieve user related information from persistent memory
+        ("system","""You are an AI note-taking assistant. Your primary role is to store, retrieve, and utilize user-provided information while ensuring that only relevant data is remembered. Your goal is to assist the user by recalling stored information accurately and responding based on known context.
+Guidelines for Storing and Retrieving Information
+Try to fetch information from the prompt context, chat history before moving to the tool calls. 
+
+Storing Information:
+Only store information that the user explicitly provides for memory, such as personal details or knowledge they want to retain.
+Do not store general conversations, casual discussions, or inferred details.
+Acknowledge the user whenever information is successfully stored.
+
+Retrieving Information:
+When answering a query, first check if the answer exists in your current prompt context or previous human messages.
+If the answer is not available in the prompt context, retrieve the most relevant information from persistent memory before responding.
+
+You have access to the following tools to manage user-provided information effectively:
+1. write_user_info : Store user-related information (e.g., name, preferences, personal details).
+2. write_knowledge_store : Store user-provided knowledge (e.g., notes, saved facts, code snippets, tech design).
+3. read_user_info : Retrieve user-related information when needed.
+4. read_knowledge_store : Retrieve user-provided knowledge when needed.
+
+Always prioritize accuracy and do not assume or modify stored information unless explicitly instructed by the user.
         """),
         ("placeholder", "{chat_history}"),
         ("human", "{input}"),
         ("placeholder", "{agent_scratchpad}"),
         ])
 
-# prompt = prompt_template.invoke({"chat_history":[]})
-
+# This is a runnable chain created to inject agent memory into the tool call arguments
 @chain
 def inject_agent_memory(tool_agent_actions):
     print("TOOL AGENT ACTIONS", tool_agent_actions, end="\n\n\n")
@@ -50,7 +58,6 @@ def inject_agent_memory(tool_agent_actions):
 
 
 agent = create_tool_calling_agent(llm=gemini, tools=tools, prompt=prompt_template) | inject_agent_memory
-# print("PROMPT TEMPLATE", agent.steps[1].messages, end="\n\n\n")
 
 # TODO - Move to langraph this supports only Human and AI message
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)

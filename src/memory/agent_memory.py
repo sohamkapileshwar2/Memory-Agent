@@ -1,12 +1,17 @@
 import json
 import os
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))  # Points to 'src/memory'
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))  
 ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..")) # Move up two levels to reach the root directory
 
 data_folder_path = os.path.join(ROOT_DIR, "data")
 os.chmod(data_folder_path, 0o777)
 
+'''
+This class is responsible for managing the agent's memory. 
+It reads and writes user information and knowledge store to and from the disk.
+Future scope: Move the user info and knowledge store to a database for better scalability.
+'''
 class AgentMemory:
     USER_INFO_PATH = f"{data_folder_path}/user_info.json"
     KNOWLEDGE_STORE_PATH = f"{data_folder_path}/knowledge_store.json"

@@ -9,16 +9,8 @@ from pydantic.v1 import BaseModel, Field
 from langchain.callbacks.manager import (
 	CallbackManagerForToolRun,
 )
-# Retrieve from memory tool call definition using pydantic class
-# Used to pass definition of the function to LLM
+# Pydantic class: schema argument for read knowledge store tool call
 class ReadKnowledgeStore(BaseModel):
-    '''
-    Retrieves knowledge store inputed by the user for the particular attribute in core memory.
-
-    Args:
-        user_type: It can be either human or agent
-        user_input: Question/Information requested by user
-    '''
     user_type: str = Field(description="Enum: human | agent")
     user_input: str = Field(description="Question/Information requested by user")
     agent_memory: Annotated[AgentMemory, InjectedToolArg] 
@@ -29,7 +21,7 @@ class ReadKnowledgeStore(BaseModel):
 class ReadKnowledgeStoreTool(BaseTool):
 
     name: str = "read_knowledge_store"
-    description: str = """Retrieves data which is inputed by the user for a particular topic from persistent memory."""
+    description: str = """Retrieve user-provided knowledge from persistent memory when user asks a question related to the topic if it is not present in prompt context. eg. (e.g., notes, saved facts, code snippets, tech design)."""
     args_schema: Type[ReadKnowledgeStore] = ReadKnowledgeStore
 
 
@@ -41,7 +33,7 @@ class ReadKnowledgeStoreTool(BaseTool):
         run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> dict:
         '''
-        Retrieves knowledge store which is inputed by the user for a particular topic from persistent memory.
+        Retrieve user-provided knowledge from persistent memory when user asks a question related to the topic if it is not present in prompt context. eg. (e.g., notes, saved facts, code snippets, tech design).
         
         Args:
             user_type: It can be either human or agent
@@ -49,8 +41,7 @@ class ReadKnowledgeStoreTool(BaseTool):
         '''
         return read_knowledge_store(user_type, user_input, agent_memory)
 
-# retrieving complete memory for now
-# Retrieve from memory function implementation
+
 def read_knowledge_store(user_type, user_input, agent_memory):
     agent_memory.read_knowledge_store()
 
