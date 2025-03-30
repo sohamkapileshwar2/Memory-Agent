@@ -10,3 +10,6 @@ Personal long term memory agent
 2. Tracing raw API calls
 3. Design on how to not store information everytime
 4. Cleanup everything not needed
+5. UI with notes interface and generalised chatbot
+6. Add GSearch tool
+7. If notes are created with links, agent should be able to fetch
