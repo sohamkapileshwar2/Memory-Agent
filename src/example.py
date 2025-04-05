@@ -62,7 +62,7 @@ agent = create_tool_calling_agent(llm=gemini, tools=tools, prompt=prompt_templat
 # TODO - Move to langraph this supports only Human and AI message
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
-agent_executor = AgentExecutor(agent=agent, tools=tools, memory=memory, verbose=True)
+agent_executor = AgentExecutor(agent=agent, tools=tools, memory=memory, verbose=True, return_intermediate_steps=True, max_execution_time=120)
 
 while True:
     user_input = input("Enter user input \n")

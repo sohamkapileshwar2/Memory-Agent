@@ -7,7 +7,6 @@ Personal long term memory agent
 
 ### To do:
 1. Add correct prompts and comments to understand the function ( agent should make tool call only when needed)
-2. Tracing raw API calls
 3. Design on how to not store information everytime
 4. Cleanup everything not needed
 5. UI with notes interface and generalised chatbot
