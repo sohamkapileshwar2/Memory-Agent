@@ -10,10 +10,14 @@ from langchain.callbacks.manager import (
 	CallbackManagerForToolRun,
 )
 
+class KnowledgeAttributes(BaseModel):
+	knowledge_attribute_name: str = Field(description="Attribute(Key)of the information of the knowledge")
+	knowledge_attribute_value: str = Field(description="Information(Value) to be stored corresponsing to the attribute")
+
+
 # Schema to pass to write knowledge store tool : Used to pass definition of the function to LLM
 class WriteKnowledgeStore(BaseModel):
-    topic_name: str = Field(description="Topic of the information being stored")
-    info: str = Field(description="Information being stored corresponding ")
+    knowledge: list[KnowledgeAttributes] = Field(description="knowledge_attributes: List of KnowledgeAttributes")
     agent_memory: Annotated[AgentMemory, InjectedToolArg] 
 	
     class Config:
@@ -27,8 +31,7 @@ class WriteKnowledgeStoreTool(BaseTool):
 
     def _run(
         self,
-        topic_name:str,
-        info:str,
+        knowledge: list,
         agent_memory:AgentMemory,
         run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> None:
@@ -36,19 +39,21 @@ class WriteKnowledgeStoreTool(BaseTool):
         Stores user-provided knowledge into persistent memory when user provides information related to the topic. (e.g., notes, saved facts, code snippets, tech design).
 
         Args:
-            topic_name: Topic of the information being stored
-            info: Information to be stored corresponsing to the topic name
+
+            knowledge: List of KnowledgeAttributes
+
         '''
-        write_knowledge_store(topic_name, info, agent_memory)
+        write_knowledge_store(knowledge, agent_memory)
 
         
 # Store into memory function implementation
-def write_knowledge_store(topic_name:str, info:str, agent_memory:AgentMemory):
+def write_knowledge_store(knowledge:list, agent_memory:AgentMemory):
     data = agent_memory.retrieved_knowledge
-    if topic_name in data:
-        data[topic_name].append(info)
-    else:
-        data[topic_name]=info
+    for info in knowledge:
+        if info.knowledge_attribute_name in data:
+            data[info.knowledge_attribute_name].append(info.knowledge_attribute_value)
+        else:
+            data[info.knowledge_attribute_name] = [info.knowledge_attribute_value]
 
     agent_memory.write_knowledge_store()
 

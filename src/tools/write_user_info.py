@@ -10,12 +10,15 @@ from langchain.callbacks.manager import (
 	CallbackManagerForToolRun,
 )
 
+class UserProfileAttributes(BaseModel):
+	user_attribute_name: str = Field(description="Attribute(Key)of the information of the user")
+	user_attribute_value: str = Field(description="Information(Value) to be stored corresponsing to the attribute")
+
 # Store into memory tool call definition using pydantic class
 # Used to pass definition of the function to LLM
 class WriteUserInformation(BaseModel):
 	user_type: str = Field(description="Enum: human | agent")
-	attribute: str = Field(description="Attribute name of the information being stored about the user type")
-	info: str = Field(description="Information being stored corresponding to the attribute")
+	user_profile: list[UserProfileAttributes] = Field(description="user_profile: List of UserProfileAttributes")
 	agent_memory: Annotated[AgentMemory, InjectedToolArg] 
 	
 	class Config:
@@ -30,8 +33,7 @@ class WriteUserInformationTool(BaseTool):
 	def _run(
 		self,
 		user_type:str,
-		attribute:str,
-		info:str,
+		user_profile:list,
 		agent_memory:AgentMemory,
 		run_manager: Optional[CallbackManagerForToolRun] = None,
 	) -> None:
@@ -40,20 +42,23 @@ class WriteUserInformationTool(BaseTool):
 
 		Args:
 			user_type: Enum - human | agent
-			attribute: Attribute/Key name of the information of the user
-			info: Information to be stored corresponsing to the attribute
+			user_profile: List of UserProfileAttributes
 		'''
-		write_user_info(user_type, attribute, info, agent_memory)
+		write_user_info(user_type, user_profile, agent_memory)
 
 # TODO: Need to implement multiple user attributes input into the file
 # Store into memory function implementation
-def write_user_info(user_type:str, attribute:str, info:str, agent_memory:AgentMemory):
+def write_user_info(user_type:str, user_profile:list , agent_memory:AgentMemory):
 	user_info = agent_memory.user_info
 	if user_type in user_info:
-		user_info[user_type][attribute]=info
+		for profile in user_profile:
+			# append user_profile to the existing user_info
+			user_info[user_type].update({profile.user_attribute_name : profile.user_attribute_value})
 	else:
 		user_info[user_type] = {}
-		user_info[user_type][attribute]=info
+		for profile in user_profile:
+			# append user_profile to the existing user_info
+			user_info[user_type].update({profile.user_attribute_name : profile.user_attribute_value})
 
 	agent_memory.write_user_info()
 

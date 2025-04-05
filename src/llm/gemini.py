@@ -37,7 +37,7 @@ class CustomChatGoogleGenerativeAI(ChatGoogleGenerativeAI):
     ):
         request = super()._prepare_request(messages, stop=stop, tools=tools, functions=functions, safety_settings=safety_settings, tool_config=tool_config, tool_choice=tool_choice, generation_config=generation_config, cached_content=cached_content)
 
-        print("RAW REQUEST BODY", request)
+        # print("RAW REQUEST BODY", request)
 
         return request
     
@@ -58,7 +58,7 @@ class CustomChatGoogleGenerativeAI(ChatGoogleGenerativeAI):
     ):
         response = super()._generate(messages, stop, run_manager,tools=tools,functions=functions,safety_settings=safety_settings,tool_config=tool_config,generation_config=generation_config,cached_content=cached_content,tool_choice=tool_choice,kwargs=kwargs)
 
-        print("PARSED RESPONSE", response)
+        # print("PARSED RESPONSE", response)
 
         return response
     
@@ -79,7 +79,7 @@ class CustomChatGoogleGenerativeAI(ChatGoogleGenerativeAI):
     ):
         response = super()._agenerate(messages, stop, run_manager,tools=tools,functions=functions,safety_settings=safety_settings,tool_config=tool_config,generation_config=generation_config,cached_content=cached_content,tool_choice=tool_choice,kwargs=kwargs)
 
-        print("PARSED ASYNC RESPONSE", response)
+        # print("PARSED ASYNC RESPONSE", response)
 
         return response
     
